@@ -45,24 +45,41 @@ client.connect(err => {
         res.json(result)
       })
 
-     //  delete api for delete data from db and ui
+     //  DELETE API for delete data from db and ui
       app.delete("/users/:id", async(req, res) => { 
         const id = req.params.id;
         const query = { _id: ObjectId(id) };
         const result = await usersCollection.deleteOne(query);
-        console.log("deleting id " + result);
+        // console.log("deleting id " + result);
         res.json(result)
       })
 
-      // get api for update a user
+      // GET API for update a user
 
       app.get("/users/:id", async(req,res) => { 
         const id = req.params.id;
         const query = { _id: ObjectId(id) };
         const user = await usersCollection.findOne(query);
-        console.log("user id" + id);
+        // console.log("user id" + id);
         res.send(user)
       })
+
+      //  PUT API for update user and email
+      app.put("/users/:id",async(req,res)=> {
+        const id = req.params.id;
+        const updatedUser = req.body;
+        const filter = { _id: ObjectId(id) };
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: {
+            name: updatedUser.name,
+            email:updatedUser.email
+          },
+        };
+        const result = await usersCollection.updateOne(filter, updateDoc, options);
+        res.json(result)
+       
+      },)
        
     } finally {
     //   await client.close();
